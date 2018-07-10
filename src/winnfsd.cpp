@@ -1,4 +1,4 @@
-inputCommand#include "Socket.h"
+#include "Socket.h"
 #include "RPCServer.h"
 #include "PortmapProg.h"
 #include "NFSProg.h"
@@ -28,7 +28,7 @@ enum
 
 static unsigned int g_nUID, g_nGID;
 static bool g_bLogOn;
-static bool g_SilentMode;
+static bool g_InputMode;
 static char *g_sFileName;
 static CRPCServer g_RPCServer;
 static CPortmapProg g_PortmapProg;
@@ -40,7 +40,7 @@ size_t g_NFS3_FHSIZE = 64;
 static void printUsage(char *pExe)
 {
     printf("\n");
-    printf("Usage: %s [-id <uid> <gid>] [-silent] [-log on | off] [-nfs3fhsize_32 on | off] [-pathFile <file>] [-addr <ip>] [export path] [alias path]\n\n", pExe);
+    printf("Usage: %s [-id <uid> <gid>] [-input] [-log on | off] [-nfs3fhsize_32 on | off] [-pathFile <file>] [-addr <ip>] [export path] [alias path]\n\n", pExe);
     printf("At least a file or a path is needed\n");
     printf("For example:\n");
     printf("On Windows> %s d:\\work\n", pExe);
@@ -79,7 +79,7 @@ static void printHelp(void)
     printf("Commands:\n");
     printf("about: display messages about this program\n");
     printf("help: display help\n");
-    printf("silent: disable command input\n");
+    printf("input: enable command input\n");
     printf("log on/off: display log messages or not\n");
     printf("list: list mounted clients\n");
     printf("refresh: refresh the mounted folders\n");
@@ -231,8 +231,14 @@ static void start(std::vector<std::vector<std::string>> paths)
 	if (bSuccess) {
 		localHost = gethostbyname("");
 		printf("Listening on %s\n", g_sInAddr);  //local address
-        if (!g_SilentMode)
-		    inputCommand();  //wait for commands
+		if (g_InputMode){
+			inputCommand();  //wait for commands
+		}
+		else {
+			//wait to be killed
+			while (true)
+				Sleep(100);
+		}
 	}
 
 	for (i = 0; i < SOCKET_NUM; i++) {
@@ -260,7 +266,7 @@ int main(int argc, char *argv[])
 
     g_nUID = g_nGID = 0;
     g_bLogOn = true;
-    g_SilentMode = false;
+    g_InputMode = false;
     g_sFileName = NULL;
 	g_sInAddr = "0.0.0.0";
 
@@ -268,8 +274,8 @@ int main(int argc, char *argv[])
         if (_stricmp(argv[i], "-id") == 0) {
             g_nUID = atoi(argv[++i]);
             g_nGID = atoi(argv[++i]);
-        } else if (_stricmp(argv[i], "-silent") == 0) {
-            g_SilentMode = true;
+        } else if (_stricmp(argv[i], "-input") == 0) {
+            g_InputMode = true;
         } else if (_stricmp(argv[i], "-log") == 0) {
             g_bLogOn = _stricmp(argv[++i], "off") != 0;
         } else if (_stricmp(argv[i], "-nfs3fhsize_32") == 0) {

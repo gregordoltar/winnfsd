@@ -110,6 +110,9 @@
     <ClInclude Include="FileTree.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="common.hh">
+      <Filter>Quelldateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Makefile" />

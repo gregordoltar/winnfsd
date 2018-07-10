@@ -146,6 +146,7 @@
     <ClCompile Include="winnfsd.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="common.hh" />
     <ClInclude Include="DatagramSocket.h" />
     <ClInclude Include="FileTable.h" />
     <ClInclude Include="FileTree.h" />
